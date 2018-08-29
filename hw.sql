@@ -20,14 +20,14 @@ go
 
 ----------------------------------------------------------------------
 
-create trigger checkingDate
+alter trigger checkingDate
 on books
 for insert
 as
 begin
 	declare @Date date
 	select @Date = DateOfPublish from inserted
-	if (@Date = null)
+	if (@Date is null)
 	begin
 		print 'Вы забыли ввести дату, введите дату!'
 		rollback transaction
@@ -39,5 +39,20 @@ insert into Books values
 	('Boom 3', 4, 3, 1500, 'no pic', null, 1800, 40)
 go
 
-drop trigger checkingDate
+-----------------------------------------------------------------------
+
+create trigger StopDeleted
+on all server
+for drop_table
+as
+	print 'Я запретил удаления всего в БД))'
+	rollback transaction
+go
+
+disable trigger StopDeleted on all server
+go
+
+-----------------------------------------------------------------------
+
+select * from [log]
 go
